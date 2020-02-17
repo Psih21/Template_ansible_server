@@ -1,3 +1,5 @@
+######## GITLAB INSTALLATION
+
 ---
 - name: install Gitlab
   hosts: git_lab_server
@@ -21,6 +23,8 @@
 
   - name: configure git
     shell: useradd git && gitlab-ctl reconfigure
+
+#####TEAMCITY INSTALLATION
 
 - name: Install teamcity
   hosts: teamcity
