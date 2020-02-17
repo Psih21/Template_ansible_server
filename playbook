@@ -1,0 +1,58 @@
+---
+- name: install Gitlab
+  hosts: git_lab_server
+  become: yes
+
+
+  tasks:
+  - name: instll dependencies
+    apt:
+     name: curl openssh-server ca-certificates postfix
+
+  - name: curl repo
+    shell: curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh | sudo bash
+
+  - name: address
+    shell:  EXTERNAL_URL="http://192.168.21.242"
+
+  - name: install Git
+    apt:
+      name: gitlab-ee
+
+  - name: configure git
+    shell: useradd git && gitlab-ctl reconfigure
+
+- name: Install teamcity
+  hosts: teamcity
+  become: yes
+
+  tasks:
+  - apt_repository:
+      repo: ppa:webupd8team/java
+
+  - name: install java
+    apt:
+      update_cache: yes
+  - name: das
+    shell: apt install -y openjdk-8-jre postgresql postgresql-contrib
+
+  - name: fsf
+    postgresql_query:
+      login_user: root
+      login_password: 1111
+      query: CREATE DATABASE teamcity
+    postgresql_query:
+      login_user: root
+      login_password: 1111
+      query: CREATE USER teamcity WITH ENCRYPTED PASSWORD '1111'
+    postgresql_query:
+      login_user: root
+      login_password: 1111
+      query: GRANT ALL PRIVILEGES ON DATABASE teamcity TO teamcity
+
+  - name: install teamcity
+    shell: wget https://download.jetbrains.com/teamcity/TeamCity-2018.1.tar.gz
+    shell: tar -xzf TeamCity-2018.1.tar.gz
+
+  - name: create directory
+    shell: mkdir / opt / JetBrains && mv TeamCity / opt / JetBrains / TeamCity && cd / opt / JetBrains / TeamCity && sudo chown -R admin21 / opt / JetBrains / TeamCity && sudo chown -R root / opt / JetBrains / TeamCity
